@@ -5,7 +5,7 @@ on:
     branches:
       - deploy
     paths:
-      - '.github/workflows/bend-ci.yml'
+      - '.github/workflows/fend-cicd.yml'
       - 'frontend/**'
 
 defaults:
