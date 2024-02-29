@@ -7,6 +7,9 @@ on:
     paths:
       - '.github/workflows/bend-cicd.yml'
       - 'backend/**'
+defaults:
+    run:
+      working-directory: backend
 
 jobs:
     build:
@@ -30,9 +33,9 @@ jobs:
             - name: push docker image
               run: |
                 cd backend &&
-                docker build -t ghcr.io/test-organization-package/frontend:latest . &&
+                docker build -t ghcr.io/test-organization-package/backend:latest . &&
                 echo "${{ secrets.PACKAGE_TOKEN }}" | docker login ghcr.io --username "${{ vars.GIT_USERNAME }}" --password-stdin &&
-                docker push ghcr.io/test-organization-package/frontend:latest
+                docker push ghcr.io/test-organization-package/backend:latest
 
     deploy:
       needs: docker-image
