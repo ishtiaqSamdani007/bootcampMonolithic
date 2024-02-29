@@ -2,7 +2,7 @@ name: backend cd
 
 on:
   workflow_run:
-    workflows: ["backend cd"]
+    workflows: ["backend ci"]
 
 jobs:
   deploy:
