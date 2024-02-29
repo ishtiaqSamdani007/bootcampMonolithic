@@ -40,6 +40,7 @@ jobs:
             - name: push docker image
               run: |
                 docker build -t ghcr.io/test-organization-package/frontend:latest . &&
+                echo "${{ secrets.PACKAGE_TOKEN }}" | docker login ghcr.io --username "${{ vars.GIT_USERNAME }}" --password-stdin &&
                 docker push ghcr.io/test-organization-package/frontend:latest
 
               
