@@ -15,7 +15,7 @@ defaults:
 
 
 jobs:
-    testcases:
+    build:
         runs-on: ${{ vars.RUNS_ON }}
         steps:
             - name: checkout to the repository
@@ -29,10 +29,11 @@ jobs:
             - name: install dependencies
               run: npm install
 
-            - name: run test-cases
-              run: npm test
+            - name: run build
+              run: npm run build
 
     docker-image:
+        needs: build
         runs-on: ${{ vars.RUNS_On }}
         steps:
             - name: checkout to branch

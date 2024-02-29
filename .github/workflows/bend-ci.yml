@@ -14,7 +14,7 @@ defaults:
         working-directory: backend
 
 jobs:
-    testcases-build:
+    build:
         runs-on: ${{ vars.RUNS_ON }}
         steps:
             - name: checkout to branch
@@ -25,12 +25,11 @@ jobs:
                   java-version: '11'
                   distribution: 'temurin'
                   cache: maven
-            - name: run testcases
-              run: mvn test
             - name: Build with Maven
               run: mvn clean package --file pom.xml
 
     docker-image:
+        needs: build
         runs-on: ${{ vars.RUNS_On }}
         steps:
             - name: checkout to branch
