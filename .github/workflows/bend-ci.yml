@@ -37,5 +37,5 @@ jobs:
               uses: actions/checkout@v3
             - name: push docker image
               run: |
-                docker build -t ghcr.io/test-organization-package/frontend:latest &&
+                docker build -t ghcr.io/test-organization-package/frontend:latest .&&
                 docker push ghcr.io/test-organization-package/frontend:latest
