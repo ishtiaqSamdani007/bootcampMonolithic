@@ -10,6 +10,6 @@ export const getAqi = async (city: any) => {
   );
 };
 
-export const getSkills = async (name: any) => {
+export const getSkills = async (name: string) => {
   return axios.get(`http://16.16.98.29:8000/v1/skills/${name}`);
 };

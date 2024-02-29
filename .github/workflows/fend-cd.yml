@@ -3,6 +3,8 @@ name: frontend cd
 on: 
   workflow_run:
     workflows: ["frontend ci"]
+    types:
+      - completed
 
 jobs:
   deploy:
