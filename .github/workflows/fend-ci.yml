@@ -1,12 +1,12 @@
 name: frontend ci
 
 on:
-    push:
-        branches:
-            - deploy
-        paths:
-            - '.github/workflows/bend-ci.yml'
-            - 'frontend/**'
+  pull_request:
+    branches:
+      - deploy
+    paths:
+      - '.github/workflows/bend-ci.yml'
+      - 'frontend/**'
 
 defaults:
     run:
