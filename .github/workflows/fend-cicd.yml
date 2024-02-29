@@ -1,4 +1,4 @@
-name: frontend ci
+name: frontend cicd
 
 on:
   push:
@@ -42,5 +42,21 @@ jobs:
                 docker build -t ghcr.io/test-organization-package/frontend:latest . &&
                 echo "${{ secrets.PACKAGE_TOKEN }}" | docker login ghcr.io --username "${{ vars.GIT_USERNAME }}" --password-stdin &&
                 docker push ghcr.io/test-organization-package/frontend:latest
+
+    deploy:
+      needs: docker-image
+      runs-on: ${{ vars.RUNS_ON }}
+      steps:
+        - name: Connect to SSH and Run Docker Images
+          env:
+            PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
+            HOSTNAME: ${{ secrets.DNS_NAME }}
+            USERNAME: ${{ secrets.USERNAME }}
+          run: |
+            ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} '
+            docker stop frontend || true &&
+            docker rm frontend || true &&
+            docker pull ghcr.io/test-organization-package/frontend:latest &&
+            docker run --name "frontend" -p 80:80 ghcr.io/test-organization-package/frontend:latest'
 
               
