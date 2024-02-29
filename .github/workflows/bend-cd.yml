@@ -1,11 +1,8 @@
-name: frontend backend cd
+name: backend cd
 
 on:
-  push:
-    branches:
-      - deploy
-    paths:
-      - 'backend/**'
+  workflow_run:
+    workflows: ["backend cd"]
 
 jobs:
   deploy:
