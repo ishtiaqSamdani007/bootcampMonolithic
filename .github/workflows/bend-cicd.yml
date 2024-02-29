@@ -47,7 +47,7 @@ jobs:
             HOSTNAME: ${{ secrets.DNS_NAME }}
             USERNAME: ${{ secrets.USERNAME }}
           run: |
-            ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} '
+            ssh -o StrictHostKeyChecking=no -i ${private_key} ${USERNAME}@${HOSTNAME} '
             docker stop backend || true &&
             docker rm backend || true &&
             docker pull ghcr.io/test-organization-package/backend:latest &&
