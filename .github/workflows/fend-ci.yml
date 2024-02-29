@@ -16,7 +16,7 @@ defaults:
 
 jobs:
     testcases:
-        runs-on: ${{ vars.RUNS_On }}
+        runs-on: ${{ vars.RUNS_ON }}
         steps:
             - name: checkout to the repository
               uses: actions/checkout@v3

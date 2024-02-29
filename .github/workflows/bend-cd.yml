@@ -9,7 +9,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.RUNS_ON }}
     steps:
       - name: Connect to SSH and Run Docker Images
         env:
@@ -17,9 +17,9 @@ jobs:
           HOSTNAME: ${{ secrets.DNS_NAME }}
           USERNAME: ${{ secrets.USERNAME }}
         run: |
-         ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} ' \
-         docker stop backend || true && \
-         docker rm backend || true && \
-         docker pull ghcr.io/test-organization-package/backend:latest && \
+         ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} '
+         docker stop backend || true &&
+         docker rm backend || true &&
+         docker pull ghcr.io/test-organization-package/backend:latest &&
          docker run --name backend -p 8000:8000 ghcr.io/test-organization-package/backend:latest'
         

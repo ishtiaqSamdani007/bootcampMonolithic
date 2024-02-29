@@ -15,7 +15,7 @@ defaults:
 
 jobs:
     testcases-build:
-        runs-on: ${{ vars.RUNS_On }}
+        runs-on: ${{ vars.RUNS_ON }}
         steps:
             - name: checkout to branch
               uses: actions/checkout@v3
