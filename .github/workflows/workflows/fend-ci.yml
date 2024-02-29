@@ -1,0 +1,45 @@
+name: frontend ci
+
+on:
+    push:
+        branches:
+            - deploy
+        paths:
+            - '.github/workflows/bend-ci.yml'
+            - 'frontend/**'
+
+defaults:
+    run:
+        shell: bash
+        working-directory: frontend
+
+
+jobs:
+    testcases:
+        runs-on: ${{ vars.RUNS_On }}
+        steps:
+            - name: checkout to the repository
+              uses: actions/checkout@v3
+            
+            - name: setup node
+              uses: actions/setup-node@v2
+              with:
+                node-version: 14
+            
+            - name: install dependencies
+              run: npm install
+
+            - name: run test-cases
+              run: npm test
+
+    docker-image:
+        runs-on: ${{ vars.RUNS_On }}
+        steps:
+            - name: checkout to branch
+              uses: actions/checkout@v3
+            - name: push docker image
+              run: |
+                docker build -t ghcr.io/test-organization-package/frontend:latest &&
+                docker push ghcr.io/test-organization-package/frontend:latest
+
+              
