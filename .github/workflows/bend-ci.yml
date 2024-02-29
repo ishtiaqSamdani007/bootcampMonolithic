@@ -26,7 +26,7 @@ jobs:
                   distribution: 'temurin'
                   cache: maven
             - name: Build with Maven
-              run: mvn clean package
+              run: mvn clean -B package
 
     docker-image:
         needs: build
