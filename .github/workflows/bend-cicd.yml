@@ -48,6 +48,7 @@ jobs:
             HOSTNAME: ${{ secrets.DNS_NAME }}
             USERNAME: ${{ secrets.USERNAME }}
           run: |
+            echo "trigger"
             echo "$PRIVATE_KEY" > private_key &&
             chmod 600 private_key &&
             ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} '
