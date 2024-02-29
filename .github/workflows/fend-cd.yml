@@ -2,7 +2,7 @@ name: frontend cd
 
 on: 
   workflow_run:
-    workflows: ["frontend ci"]
+    workflows: ["frontend cd"]
 
 jobs:
   deploy:
