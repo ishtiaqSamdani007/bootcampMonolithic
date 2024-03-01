@@ -1,0 +1,57 @@
+name: backend cicd
+
+on:
+  push:
+    branches:
+      - deploy
+    paths:
+      - '.github/workflows/bend-cicd.yml'
+      - 'backend/**'
+defaults:
+    run:
+      working-directory: backend
+
+jobs:
+    build:
+        runs-on: ${{ vars.RUNS_ON }}
+        steps:
+            - name: checkout to branch
+              uses: actions/checkout@v3
+            - name: Set up JDK 11
+              uses: actions/setup-java@v1
+              with:
+                  java-version: '11'
+            - name: Build with Maven
+              run: mvn clean package -DskipTests
+
+    docker-image:
+        needs: build
+        runs-on: ${{ vars.RUNS_On }}
+        steps:
+            - name: checkout to branch
+              uses: actions/checkout@v3
+            - name: push docker image
+              run: |
+                docker build -t ghcr.io/test-organization-package/backend:latest . &&
+                echo "${{ secrets.PACKAGE_TOKEN }}" | docker login ghcr.io --username "${{ vars.GIT_USERNAME }}" --password-stdin &&
+                docker push ghcr.io/test-organization-package/backend:latest
+
+    deploy:
+      needs: docker-image
+      runs-on: ${{ vars.RUNS_ON }}
+      steps:
+        - name: checkout to branch
+          uses: actions/checkout@v3
+        - name: Connect to SSH and Run Docker Images
+          env:
+            PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
+            HOSTNAME: ${{ secrets.DNS_NAME }}
+            USERNAME: ${{ secrets.USERNAME }}
+          run: |
+            echo "$PRIVATE_KEY" > private_key &&
+            chmod 600 private_key &&
+            ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} '
+            docker stop backend || true &&
+            docker rm backend || true &&
+            docker pull ghcr.io/test-organization-package/backend:latest &&
+            docker run --name backend -p 8000:8000 ghcr.io/test-organization-package/backend:latest'

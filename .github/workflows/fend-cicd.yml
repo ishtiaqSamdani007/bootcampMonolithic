@@ -1,0 +1,66 @@
+name: frontend cicd
+
+on:
+  push:
+    branches:
+      - deploy
+    paths:
+      - '.github/workflows/fend-cicd.yml'
+      - 'frontend/**'
+
+defaults:
+    run:
+      working-directory: frontend
+
+
+jobs:
+    build:
+        runs-on: ${{ vars.RUNS_ON }}
+        steps:
+            - name: checkout to the repository
+              uses: actions/checkout@v3
+            
+            - name: setup node
+              uses: actions/setup-node@v2
+              with:
+                node-version: 14
+            
+            - name: install dependencies
+              run: npm install
+
+            - name: run build
+              run: npm run build
+
+    docker-image:
+        needs: build
+        runs-on: ${{ vars.RUNS_On }}
+        steps:
+            - name: checkout to branch
+              uses: actions/checkout@v3
+            - name: push docker image
+              run: |
+                docker build -t ghcr.io/test-organization-package/frontend:latest . &&
+                echo "${{ secrets.PACKAGE_TOKEN }}" | docker login ghcr.io --username "${{ vars.GIT_USERNAME }}" --password-stdin &&
+                docker push ghcr.io/test-organization-package/frontend:latest
+
+    deploy:
+      needs: docker-image
+      runs-on: ${{ vars.RUNS_ON }}
+      steps:
+        - name: checkout to branch
+          uses: actions/checkout@v3
+        - name: Connect to SSH and Run Docker Images
+          env:
+            PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
+            HOSTNAME: ${{ secrets.DNS_NAME }}
+            USERNAME: ${{ secrets.USERNAME }}
+          run: |
+            echo "$PRIVATE_KEY" > private_key &&
+            chmod 600 private_key &&
+            ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} '
+            docker stop frontend || true &&
+            docker rm frontend || true &&
+            docker pull ghcr.io/test-organization-package/frontend:latest &&
+            docker run -d --name "frontend" -p 80:80 ghcr.io/test-organization-package/frontend:latest'
+
+              
