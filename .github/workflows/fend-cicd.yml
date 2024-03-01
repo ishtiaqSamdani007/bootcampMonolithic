@@ -61,6 +61,6 @@ jobs:
             docker stop frontend || true &&
             docker rm frontend || true &&
             docker pull ghcr.io/test-organization-package/frontend:latest &&
-            docker run --name "frontend" -p 80:80 ghcr.io/test-organization-package/frontend:latest'
+            docker run -d --name "frontend" -p 80:80 ghcr.io/test-organization-package/frontend:latest'
 
               
